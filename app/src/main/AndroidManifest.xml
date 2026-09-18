@@ -2,15 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- أذونات فلاش الكاميرا الخلفي فقط (Lampe Torche) والاهتزاز والاستماع للإشعارات -->
+    <!-- أذونات فلاش الكاميرا الخلفي والاهتزاز والاستماع للإشعارات وظهور وميض الألوان فوق الشاشة -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
-    <uses-feature android:name="android.hardware.camera.flash" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -35,7 +36,7 @@
             </intent-filter>
         </activity>
 
-        <!-- خدمة الاستماع لإشعارات النظام وتشغيل وميض الفلاش Torche -->
+        <!-- خدمة الاستماع لإشعارات النظام وتشغيل وميض الفلاش والألوان -->
         <service
             android:name=".PixelColorNotificationService"
             android:label="@string/service_name"
@@ -45,6 +46,11 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
+        <!-- خدمة وميض الشاشة بالألوان المخصصة -->
+        <service
+            android:name=".ScreenColorFlashService"
+            android:exported="false" />
 
         <!-- زر الإعدادات السريعة المدمج في شريط إشعارات أندرويد -->
         <service

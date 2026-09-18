@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 
 /**
- * مدير إعدادات وميض الفلاش (Lampe Torche)
+ * مدير إعدادات إشعارات الألوان المدمج
  */
 object AppPreferences {
-    private const val PREFS_NAME = "pixel_torch_notify_prefs"
+    private const val PREFS_NAME = "pixel_color_notify_prefs"
     private const val KEY_SERVICE_ENABLED = "key_service_enabled"
-    private const val KEY_FLASH_ENABLED = "key_flash_enabled"
+    private const val KEY_SCREEN_FLASH_ENABLED = "key_screen_flash_enabled"
+    private const val KEY_TORCH_FLASH_ENABLED = "key_torch_flash_enabled"
+    private const val KEY_FULL_SCREEN_MODE = "key_full_screen_mode"
     private const val KEY_RHYTHM_COUNT = "key_rhythm_count"
     private const val KEY_DND_AWARE = "key_dnd_aware"
 
@@ -25,16 +27,35 @@ object AppPreferences {
         getPrefs(context).edit().putBoolean(KEY_SERVICE_ENABLED, enabled).apply()
     }
 
-    fun isFlashEnabled(context: Context): Boolean {
-        return getPrefs(context).getBoolean(KEY_FLASH_ENABLED, true)
+    // تفعيل وميض الشاشة بالألوان (Clignotement de l'écran avec couleurs personnalisées)
+    fun isScreenFlashEnabled(context: Context): Boolean {
+        return getPrefs(context).getBoolean(KEY_SCREEN_FLASH_ENABLED, true)
     }
 
-    fun setFlashEnabled(context: Context, enabled: Boolean) {
-        getPrefs(context).edit().putBoolean(KEY_FLASH_ENABLED, enabled).apply()
+    fun setScreenFlashEnabled(context: Context, enabled: Boolean) {
+        getPrefs(context).edit().putBoolean(KEY_SCREEN_FLASH_ENABLED, enabled).apply()
+    }
+
+    // تفعيل وميض الفلاش الخلفي (Lampe Torche)
+    fun isTorchFlashEnabled(context: Context): Boolean {
+        return getPrefs(context).getBoolean(KEY_TORCH_FLASH_ENABLED, true)
+    }
+
+    fun setTorchFlashEnabled(context: Context, enabled: Boolean) {
+        getPrefs(context).edit().putBoolean(KEY_TORCH_FLASH_ENABLED, enabled).apply()
+    }
+
+    // هل الوميض للشاشة كاملة أم فقط حواف الشاشة المنحنية (Edge Lighting)
+    fun isFullScreenMode(context: Context): Boolean {
+        return getPrefs(context).getBoolean(KEY_FULL_SCREEN_MODE, false)
+    }
+
+    fun setFullScreenMode(context: Context, full: Boolean) {
+        getPrefs(context).edit().putBoolean(KEY_FULL_SCREEN_MODE, full).apply()
     }
 
     fun getRhythmCount(context: Context): Int {
-        return getPrefs(context).getInt(KEY_RHYTHM_COUNT, 3)
+        return getPrefs(context).getInt(KEY_RHYTHM_COUNT, 2)
     }
 
     fun setRhythmCount(context: Context, count: Int) {
@@ -47,5 +68,15 @@ object AppPreferences {
 
     fun setDndAware(context: Context, enabled: Boolean) {
         getPrefs(context).edit().putBoolean(KEY_DND_AWARE, enabled).apply()
+    }
+
+    // حفظ وتخصيص لون يدوي لتطبيق معين
+    fun getAppCustomColor(context: Context, packageName: String): Int? {
+        val colorInt = getPrefs(context).getInt("custom_color_$packageName", -1)
+        return if (colorInt != -1) colorInt else null
+    }
+
+    fun setAppCustomColor(context: Context, packageName: String, colorInt: Int) {
+        getPrefs(context).edit().putInt("custom_color_$packageName", colorInt).apply()
     }
 }

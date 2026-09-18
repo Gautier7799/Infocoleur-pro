@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Pixel Torch Notify</string>
-    <string name="service_name">Pixel Torch Notification Service</string>
-    <string name="tile_name">فلاش الإشعارات</string>
-    <string name="tile_active_subtitle">الفلاش نشط</string>
-    <string name="tile_inactive_subtitle">الفلاش متوقف</string>
+    <string name="app_name">Pixel Color Notify Pro</string>
+    <string name="service_name">Pixel Smart Color Notification Service</string>
+    <string name="tile_name">إشعار الألوان الذكي</string>
+    <string name="tile_active_subtitle">الوميض الملون نشط</string>
+    <string name="tile_inactive_subtitle">الوميض متوقف</string>
 </resources>
