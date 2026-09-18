@@ -1,7 +1,7 @@
 export interface AndroidSourceFile {
   name: string;
   path: string;
-  category: 'service' | 'manager' | 'ui' | 'widget' | 'manifest' | 'gradle' | 'workflow';
+  category: 'service' | 'manager' | 'ui' | 'widget' | 'manifest' | 'gradle' | 'workflow' | 'system';
   description: string;
   code: string;
 }
@@ -790,5 +790,84 @@ jobs:
           name: Release \${{ github.ref_name }}
         env:
           GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}`
+  },
+  {
+    name: 'PixelLightTileService.kt',
+    path: 'app/src/main/java/com/pixel/lightnotify/PixelLightTileService.kt',
+    category: 'system',
+    description: 'زر الإعدادات السريعة المدمج في لوحة إشعارات أندرويد الرسمية (Quick Settings Tile) للتحكم السريع في الفلاش',
+    code: `package com.pixel.lightnotify
+
+import android.graphics.drawable.Icon
+import android.service.quicksettings.Tile
+import android.service.quicksettings.TileService
+
+/**
+ * زر الإعدادات السريعة المدمج في نظام أندرويد لهاتف Pixel 8
+ * يتيح التحكم السريع في تفعيل/تعطيل إشعارات الإضاءة من شريط الإشعارات مباشرة
+ */
+class PixelLightTileService : TileService() {
+
+    override fun onStartListening() {
+        super.onStartListening()
+        updateTileState()
+    }
+
+    override fun onClick() {
+        super.onClick()
+        val tile = qsTile ?: return
+        val isCurrentlyActive = (tile.state == Tile.STATE_ACTIVE)
+
+        val newState = !isCurrentlyActive
+        AppPreferences.setServiceGlobalEnabled(this, newState)
+        updateTileState()
+    }
+
+    private fun updateTileState() {
+        val tile = qsTile ?: return
+        val isEnabled = AppPreferences.isServiceGlobalEnabled(this)
+
+        tile.state = if (isEnabled) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
+        tile.label = "إشعار ضوء Pixel"
+        tile.subtitle = if (isEnabled) "الخدمة نشطة" else "متوقفة"
+        tile.icon = Icon.createWithResource(
+            this,
+            if (isEnabled) R.drawable.ic_flash_active else R.drawable.ic_flash_inactive
+        )
+        tile.updateTile()
+    }
+}`
+  },
+  {
+    name: 'privapp-permissions-com.pixel.lightnotify.xml',
+    path: 'app/src/main/assets/privapp-permissions-com.pixel.lightnotify.xml',
+    category: 'system',
+    description: 'ملف الأذونات التفضيلية Privapp Permissions لدمج التطبيق كتطبيق نظام أصلي في /system/priv-app/ بدون قيود Doze',
+    code: `<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ملف منح امتيازات النظام لتطبيق إشعارات Pixel 8 المدمج
+    يتم وضعه في مسار: /system/etc/permissions/
+-->
+<permissions>
+    <privapp-permissions package="com.pixel.lightnotify">
+        <!-- إعفاء تام ودائم من قيود تحسين البطارية Doze Mode -->
+        <permission name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+        
+        <!-- التحكم المباشر بأجهزة الإضاءة والفلاش في العتاد -->
+        <permission name="android.permission.CAMERA"/>
+        
+        <!-- الاستماع التلقائي والمستمر لتدفق إشعارات أندرويد -->
+        <permission name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"/>
+        
+        <!-- إطلاق خدمة المراقبة التلقائية فور تشغيل الهاتف -->
+        <permission name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+        
+        <!-- التحكم بالاهتزاز التفاعلي مع الفلاش -->
+        <permission name="android.permission.VIBRATE"/>
+        
+        <!-- إمكانية إضاءة الحواف فوق شاشة القفل و AOD -->
+        <permission name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    </privapp-permissions>
+</permissions>`
   }
 ];

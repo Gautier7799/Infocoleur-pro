@@ -7,6 +7,7 @@ import { AndroidWidgetPreview } from './components/AndroidWidgetPreview';
 import { AndroidCodeExporter } from './components/AndroidCodeExporter';
 import { HardwareExplanation } from './components/HardwareExplanation';
 import { GitHubWorkflowGuide } from './components/GitHubWorkflowGuide';
+import { SystemAppIntegration } from './components/SystemAppIntegration';
 import { 
   Flashlight, 
   Smartphone, 
@@ -20,7 +21,8 @@ import {
   Sliders,
   BellRing,
   RotateCcw,
-  GitBranch
+  GitBranch,
+  Cpu
 } from 'lucide-react';
 
 export default function App() {
@@ -38,7 +40,7 @@ export default function App() {
 
   const [selectedApp, setSelectedApp] = useState<AppLightConfig>(apps[0]);
   const [activeNotification, setActiveNotification] = useState<NotificationEvent | null>(null);
-  const [activeTab, setActiveTab] = useState<'simulator' | 'widget' | 'code' | 'actions' | 'guide'>('actions');
+  const [activeTab, setActiveTab] = useState<'simulator' | 'widget' | 'code' | 'actions' | 'system' | 'guide'>('system');
   const [isServiceEnabled, setIsServiceEnabled] = useState(true);
 
   const [settings, setSettings] = useState<DeviceSettings>({
@@ -227,6 +229,22 @@ export default function App() {
             </button>
 
             <button
+              id="tab-system"
+              onClick={() => setActiveTab('system')}
+              className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 ${
+                activeTab === 'system'
+                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/25'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+              }`}
+            >
+              <Cpu className="w-4 h-4 text-emerald-400" />
+              <span>تطبيق مدمج بالنظام</span>
+              <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold border border-emerald-500/30">
+                Priv-App
+              </span>
+            </button>
+
+            <button
               id="tab-guide"
               onClick={() => setActiveTab('guide')}
               className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 ${
@@ -315,6 +333,12 @@ export default function App() {
         {activeTab === 'actions' && (
           <div className="space-y-6">
             <GitHubWorkflowGuide />
+          </div>
+        )}
+
+        {activeTab === 'system' && (
+          <div className="space-y-6">
+            <SystemAppIntegration />
           </div>
         )}
 
