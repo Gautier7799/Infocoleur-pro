@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Pixel Color Notify</string>
+    <string name="service_name">Pixel Color Light Notification Service</string>
+    <string name="tile_name">إشعار الضوء الملون</string>
+    <string name="tile_active_subtitle">الضوء الملون نشط</string>
+    <string name="tile_inactive_subtitle">متوقف مؤقتاً</string>
+</resources>

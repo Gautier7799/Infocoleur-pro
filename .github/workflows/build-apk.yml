@@ -6,7 +6,7 @@ on:
     tags: [ "v*" ]
   pull_request:
     branches: [ "main", "master" ]
-  workflow_dispatch: # يتيح لك تشغيل البناء يدوياً بزر Run workflow بنقرة واحدة من لوحة Actions في GitHub!
+  workflow_dispatch: # زر التشغيل اليدوي بنقرة واحدة من Actions في GitHub
 
 permissions:
   contents: write
@@ -25,33 +25,27 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: 🔧 Setup Android SDK & Build Environment
+      - name: 🔧 Setup Android SDK & Build Tools
         uses: android-actions/setup-android@v3
 
-      - name: 🔐 Ensure gradlew permissions
+      - name: 🔐 Setup Gradle Wrapper & Executable Permissions
         run: |
-          if [ -f "./gradlew" ]; then
-            chmod +x gradlew
-          else
-            echo "Gradle wrapper not present, setting up default Gradle..."
-            gradle wrapper || true
-            chmod +x gradlew || true
+          mkdir -p gradle/wrapper
+          if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+            echo "Downloading gradle-wrapper.jar..."
+            curl -sLo gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.7.0/gradle/wrapper/gradle-wrapper.jar || true
           fi
+          chmod +x gradlew || true
 
       - name: 🏗️ Build Debug APK with Gradle
         run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew assembleDebug --stacktrace
-          else
-            gradle assembleDebug --stacktrace
-          fi
+          ./gradlew assembleDebug --stacktrace --no-daemon
 
       - name: 📦 Upload APK to GitHub Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Pixel8-LightNotification-Debug-APK
+          name: Pixel-ColorNotification-Debug-APK
           path: |
             app/build/outputs/apk/debug/*.apk
             **/build/outputs/apk/**/*.apk
@@ -66,9 +60,9 @@ jobs:
           prerelease: false
           name: Release ${{ github.ref_name }}
           body: |
-            ## 📱 Pixel 8 Light Notification - إصدار APK
+            ## 📱 Pixel Color Light Notification - إصدار APK
             - مبني تلقائياً عبر GitHub Actions 🚀
             - متوافق مع Android 14 / 15 / 16 / 17
-            - يدعم إشعارات الفلاش الخلفية وإضاءة الحواف وويدجت Glance
+            - يدعم إشعارات الفلاش وإضاءة الحواف بالألوان المدمجة في النظام
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
