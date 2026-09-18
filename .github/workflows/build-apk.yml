@@ -1,4 +1,4 @@
-name: Build Android APK (Pixel Torch Light Notification)
+name: Build Android APK (Pixel Color & Torch Notification)
 
 on:
   push:
@@ -26,10 +26,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 🐘 Setup Gradle
+      - name: 🐘 Setup Gradle 8.7 (Compatible with AGP 8.5)
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
 
-      - name: 🔐 Accept Android Licenses
+      - name: 🔐 Accept Android SDK Licenses
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
@@ -40,7 +42,7 @@ jobs:
       - name: 📦 Upload APK to GitHub Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Pixel-TorchNotification-Debug-APK
+          name: Pixel-ColorNotification-Debug-APK
           path: |
             app/build/outputs/apk/debug/*.apk
             **/build/outputs/apk/**/*.apk
@@ -55,9 +57,10 @@ jobs:
           prerelease: false
           name: Release ${{ github.ref_name }}
           body: |
-            ## 🔦 Pixel Torch Light Notification - إصدار APK
-            - وميض فلاش الكاميرا الخلفي (Lampe Torche) فقط للإشعارات
-            - خالي تماماً من إضاءة الشاشة
-            - متوافق مع Android 14 / 15 / 16 / 17
+            ## 🎨 Pixel Smart Color & Torch Notification - APK
+            - وميض الشاشة الذكي الملون حسب كل تطبيق (واتساب أخضر، تيليجرام أزرق...)
+            - وميض فلاش الكاميرا الخلفي (Lampe Torche) متزامن مع اللون
+            - دعم إطار الحواف المنحنية (Edge Lighting) والشاشة كاملة
+            - متوافق مع هواتف Pixel وأندرويد 14 / 15 / 16
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.pixel.colornotify"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.pixel.colornotify"
         minSdk = 28
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
 
