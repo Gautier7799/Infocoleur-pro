@@ -1,0 +1,6 @@
+{
+  "name": "Pixel Light Notifications Studio",
+  "description": "تطبيق ومحاكي إشعارات ضوئية ذكي لهاتف Pixel 8 وAndroid - تخصيص ألوان الإشعارات وفلاش الكاميرا وإضاءة الحواف مع كود Kotlin وJetpack Compose كامل وجاهز",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
