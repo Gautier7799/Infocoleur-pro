@@ -6,6 +6,7 @@ import { AppConfigurator } from './components/AppConfigurator';
 import { AndroidWidgetPreview } from './components/AndroidWidgetPreview';
 import { AndroidCodeExporter } from './components/AndroidCodeExporter';
 import { HardwareExplanation } from './components/HardwareExplanation';
+import { GitHubWorkflowGuide } from './components/GitHubWorkflowGuide';
 import { 
   Flashlight, 
   Smartphone, 
@@ -18,7 +19,8 @@ import {
   Shield, 
   Sliders,
   BellRing,
-  RotateCcw
+  RotateCcw,
+  GitBranch
 } from 'lucide-react';
 
 export default function App() {
@@ -36,7 +38,7 @@ export default function App() {
 
   const [selectedApp, setSelectedApp] = useState<AppLightConfig>(apps[0]);
   const [activeNotification, setActiveNotification] = useState<NotificationEvent | null>(null);
-  const [activeTab, setActiveTab] = useState<'simulator' | 'widget' | 'code' | 'guide'>('simulator');
+  const [activeTab, setActiveTab] = useState<'simulator' | 'widget' | 'code' | 'actions' | 'guide'>('actions');
   const [isServiceEnabled, setIsServiceEnabled] = useState(true);
 
   const [settings, setSettings] = useState<DeviceSettings>({
@@ -205,7 +207,23 @@ export default function App() {
               }`}
             >
               <Code2 className="w-4 h-4" />
-              <span>أكواد Kotlin و Jetpack Compose الجاهزة</span>
+              <span>أكواد Kotlin و Jetpack Compose</span>
+            </button>
+
+            <button
+              id="tab-actions"
+              onClick={() => setActiveTab('actions')}
+              className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 ${
+                activeTab === 'actions'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+              }`}
+            >
+              <GitBranch className="w-4 h-4 text-emerald-400" />
+              <span>GitHub Actions لبناء APK</span>
+              <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold border border-emerald-500/30">
+                سحابي
+              </span>
             </button>
 
             <button
@@ -291,6 +309,12 @@ export default function App() {
         {activeTab === 'code' && (
           <div className="space-y-6">
             <AndroidCodeExporter />
+          </div>
+        )}
+
+        {activeTab === 'actions' && (
+          <div className="space-y-6">
+            <GitHubWorkflowGuide />
           </div>
         )}
 

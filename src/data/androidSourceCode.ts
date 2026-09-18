@@ -1,7 +1,7 @@
 export interface AndroidSourceFile {
   name: string;
   path: string;
-  category: 'service' | 'manager' | 'ui' | 'widget' | 'manifest' | 'gradle';
+  category: 'service' | 'manager' | 'ui' | 'widget' | 'manifest' | 'gradle' | 'workflow';
   description: string;
   code: string;
 }
@@ -715,5 +715,80 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
 }`
+  },
+  {
+    name: 'build-apk.yml',
+    path: '.github/workflows/build-apk.yml',
+    category: 'workflow',
+    description: 'ملف GitHub Actions لبناء ملف الـ APK الخاص بـ Pixel 8 تلقائياً في السحابة وتوفيره للتحميل المباشر',
+    code: `name: Build Android APK (Pixel Light Notification)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # يتيح تشغيل البناء يدوياً بزر Run workflow بنقرة واحدة
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: 🚀 Build APK with Jetpack Compose
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK 17 (Java 17 for Android 14/15/16/17)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: 🔧 Setup Android SDK & Build Environment
+        uses: android-actions/setup-android@v3
+
+      - name: 🔐 Ensure gradlew permissions
+        run: |
+          if [ -f "./gradlew" ]; then
+            chmod +x gradlew
+          else
+            echo "Setting up Gradle wrapper..."
+            gradle wrapper || true
+            chmod +x gradlew || true
+          fi
+
+      - name: 🏗️ Build Debug APK with Gradle
+        run: |
+          if [ -f "./gradlew" ]; then
+            ./gradlew assembleDebug --stacktrace
+          else
+            gradle assembleDebug --stacktrace
+          fi
+
+      - name: 📦 Upload APK to GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pixel8-LightNotification-Debug-APK
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            **/build/outputs/apk/**/*.apk
+          retention-days: 30
+
+      - name: 🏷️ Create GitHub Release (Optional on tag push)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: app/build/outputs/apk/debug/*.apk
+          draft: false
+          prerelease: false
+          name: Release \${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}`
   }
 ];
