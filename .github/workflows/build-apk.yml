@@ -26,19 +26,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 🔐 Setup Gradle Wrapper & Accept Android Licenses
+      - name: 🐘 Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: 🔐 Accept Android Licenses
         run: |
-          mkdir -p gradle/wrapper
-          if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
-            echo "Downloading gradle-wrapper.jar..."
-            curl -sLo gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.7.0/gradle/wrapper/gradle-wrapper.jar || true
-          fi
-          chmod +x gradlew || true
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
       - name: 🏗️ Build Debug APK with Gradle
         run: |
-          ./gradlew assembleDebug --stacktrace --no-daemon
+          gradle assembleDebug --stacktrace --no-daemon
 
       - name: 📦 Upload APK to GitHub Artifacts
         uses: actions/upload-artifact@v4
